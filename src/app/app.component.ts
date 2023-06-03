@@ -1,10 +1,10 @@
 import { AppState } from './app.module';
-import { getItems } from './store/items.selector';
 import { Item } from './model/item';
 import { addItem, deleteItem } from './store/items.actions';
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { getItems } from './store/items.selectors';
 
 
 @Component({
