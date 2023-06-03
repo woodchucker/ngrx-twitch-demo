@@ -1,12 +1,13 @@
 import { Item } from './model/item';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { FormsModule } from '@angular/forms'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools'
 import { itemsReducer } from './store/items.reducers';
+import { EffectsModule } from '@ngrx/effects';
 
 export interface AppState {
   items: Item[];
@@ -36,7 +37,10 @@ export interface AppState {
     ),
     StoreDevtoolsModule.instrument({
       maxAge:25
-    })
+    }),
+    StoreModule.forRoot({}, {}),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    EffectsModule.forRoot([])
   ],
   providers: [],
   bootstrap: [AppComponent]
