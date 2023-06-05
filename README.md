@@ -1,3 +1,8 @@
+# Data persistency can be obtained with
+Troncone library
+MetaReducer
+Localstorage
+
 # NgrxTwitchDemo
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.2.

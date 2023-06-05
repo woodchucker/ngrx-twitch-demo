@@ -1,15 +1,16 @@
 import { AppState } from './app.module';
 import { Item } from './model/item';
-import { addItem, deleteItem } from './store/items.actions';
-import { Component } from '@angular/core';
+import { addItem, deleteItem, loadItems } from './store/items.actions';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { getItems } from './store/items.selectors';
+import { getItems, getItemsError } from './store/items.selectors';
 
 
 @Component({
   selector: 'fdt-root',
   template: `
+  <div *ngIf="itemsError$ | async"> C'è un errore </div>
   <form #f="ngForm" (submit)="addItemHandler(f.value)">
     <input type="text" name="name" [ngModel]>
   </form>
@@ -24,14 +25,18 @@ import { getItems } from './store/items.selectors';
   `,
   styles: []
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   items$: Observable<Item[]> = this.store.select(getItems);
+  itemsError$: Observable<boolean> = this.store.select(getItemsError);
   items: Item[] = [];
 
   constructor(private store: Store<AppState>) { }
+  ngOnInit(): void {
+    this.store.dispatch(loadItems());
+  }
 
   addItemHandler(item: Omit<Item, 'id'>): void {
-    const formData = { id: Date.now(), ...item};
+    const formData = { ...item};
     this.store.dispatch(addItem({ item: formData}));
   }
 

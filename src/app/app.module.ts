@@ -4,14 +4,21 @@ import { NgModule, isDevMode } from '@angular/core';
 import { FormsModule } from '@angular/forms'
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { StoreModule } from '@ngrx/store'
+import { ActionReducerMap, StoreModule } from '@ngrx/store'
 import { StoreDevtoolsModule } from '@ngrx/store-devtools'
-import { itemsReducer } from './store/items.reducers';
+import { ItemState, itemsReducer } from './store/items.reducers';
+import {  HttpClientModule } from '@angular/common/http';
 import { EffectsModule } from '@ngrx/effects';
+import { ItemsEffects } from './store/items.effects';
 
 export interface AppState {
-  items: Item[];
-  auth: { token: string, role: string};
+  items: ItemState;
+  // auth: { token: string, role: string};
+}
+
+// Tipizzazione del reducer
+export const reducers: ActionReducerMap<AppState> = {
+  items: itemsReducer,
 }
 
 @NgModule({
@@ -21,26 +28,27 @@ export interface AppState {
   imports: [
     BrowserModule,
     FormsModule,
+    HttpClientModule,
     AppRoutingModule,
+    // oggetti modificabili dai reducers che ascoltano le actions aggiornano lo store
+    // le info saranno recuperabili con dei selector
+    // side effects simile ai reducer ascolta le action aggiorna il server
+    // reducer inizializza e muta lo store
     StoreModule.forRoot(
-      {
-        // oggetti modificabili dai reducers che ascoltano le actions aggiornano lo store
-        // le ingo saranno recuperabili con dei selector
-        // side effects simile ai reducer ascolta le action aggiorna il server
-        // reducer inizializza e muta lo store
-        items: itemsReducer,
-        auth: () => [{
-          token: 'abc123',
-          role: 'admin'
-        }]
-      }
+      reducers, // tipizzazione reducer
+      //
+      // {
+      //   items: itemsReducer,
+        // auth: () => [{
+        //   token: 'abc123',
+        //   role: 'admin'
+        // }]
+      // }
     ),
     StoreDevtoolsModule.instrument({
       maxAge:25
     }),
-    StoreModule.forRoot({}, {}),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
-    EffectsModule.forRoot([])
+    EffectsModule.forRoot([ItemsEffects])
   ],
   providers: [],
   bootstrap: [AppComponent]
